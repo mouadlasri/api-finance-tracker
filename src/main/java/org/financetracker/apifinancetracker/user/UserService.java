@@ -26,6 +26,11 @@ public class UserService {
     }
 
     public User createUser(CreateUserRequest request) {
+        Optional<User> existingUser = userRepository.findUserByEmail(request.getEmail());
+        if (existingUser.isPresent()) { // check if a user with this email already exists
+            throw new ResponseStatusException(HttpStatus.CONFLICT, "User with this email already exists");
+        }
+
         User user = new User();
         user.setName(request.getName());
         user.setEmail(request.getEmail());

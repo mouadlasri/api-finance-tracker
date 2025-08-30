@@ -2,6 +2,7 @@ package org.financetracker.apifinancetracker.user;
 
 import org.financetracker.apifinancetracker.user.dto.CreateUserRequest;
 import org.financetracker.apifinancetracker.user.dto.UserResponse;
+import org.springframework.dao.DataIntegrityViolationException;
 import org.springframework.http.HttpStatus;
 import org.springframework.http.ResponseEntity;
 import org.springframework.web.bind.annotation.*;
@@ -31,14 +32,18 @@ public class UserController {
     @PostMapping
     public ResponseEntity<UserResponse> createUser(@RequestBody CreateUserRequest request) {
         // pass DTO to service which handles the business logic
-        User newUser = userService.createUser(request);
+        try {
+            User newUser = userService.createUser(request);
 
-        UserResponse response = new UserResponse(
-                newUser.getId(),
-                newUser.getName(),
-                newUser.getEmail()
-        );
+            UserResponse response = new UserResponse(
+                    newUser.getId(),
+                    newUser.getName(),
+                    newUser.getEmail()
+            );
 
-        return new ResponseEntity<>(response, HttpStatus.CREATED);
+            return new ResponseEntity<>(response, HttpStatus.CREATED);
+        } catch (DataIntegrityViolationException e) {
+            return ResponseEntity.status(HttpStatus.CONFLICT).build();
+        }
     }
 }
