@@ -1,7 +1,11 @@
 package org.financetracker.apifinancetracker.category;
 
 import jakarta.persistence.*;
+import org.financetracker.apifinancetracker.subcategory.Subcategory;
 import org.financetracker.apifinancetracker.user.User;
+
+import java.util.HashSet;
+import java.util.Set;
 
 @Entity
 @Table(name = "category")
@@ -16,6 +20,9 @@ public class Category {
     @ManyToOne(cascade = CascadeType.ALL)
     @JoinColumn(name = "user_id", nullable = false)
     private User user;
+
+    @OneToMany(mappedBy = "category", cascade = CascadeType.ALL, orphanRemoval = true)
+    private Set<Subcategory> subcategories = new HashSet<>();
 
     public Category() {}
 
@@ -46,5 +53,13 @@ public class Category {
 
     public void setUser(User user) {
         this.user = user;
+    }
+
+    public Set<Subcategory> getSubcategories() {
+        return subcategories;
+    }
+
+    public void setSubcategories(Set<Subcategory> subcategories) {
+        this.subcategories = subcategories;
     }
 }

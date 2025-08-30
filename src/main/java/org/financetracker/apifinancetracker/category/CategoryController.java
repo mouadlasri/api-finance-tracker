@@ -3,6 +3,7 @@ package org.financetracker.apifinancetracker.category;
 import org.apache.coyote.Response;
 import org.financetracker.apifinancetracker.category.dto.CategoryResponse;
 import org.financetracker.apifinancetracker.category.dto.CreateCategoryRequest;
+import org.financetracker.apifinancetracker.subcategory.dto.SubcategoryResponse;
 import org.financetracker.apifinancetracker.user.User;
 import org.financetracker.apifinancetracker.user.UserService;
 import org.springframework.http.HttpStatus;
@@ -35,9 +36,9 @@ public class CategoryController {
         return ResponseEntity.ok(response);
     }
 
-    @GetMapping("/user/{id}")
-    public List<CategoryResponse> getCategoriesByUserId(@PathVariable Long id) {
-        User user = userService.findUserById(id);
+    @GetMapping("/user/{userId}")
+    public List<CategoryResponse> getCategoriesByUserId(@PathVariable Long userId) {
+        User user = userService.findUserById(userId);
 
         List<CategoryResponse> categoryResponses = user.getCategories().stream().map(category -> new CategoryResponse(
                 category.getId(),
