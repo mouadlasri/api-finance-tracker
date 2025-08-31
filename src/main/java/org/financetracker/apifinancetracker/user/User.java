@@ -2,6 +2,7 @@ package org.financetracker.apifinancetracker.user;
 
 import jakarta.persistence.*;
 import org.financetracker.apifinancetracker.category.Category;
+import org.financetracker.apifinancetracker.transaction.Transaction;
 
 import java.util.HashSet;
 import java.util.Set;
@@ -21,6 +22,9 @@ public class User {
 
     @OneToMany(mappedBy = "user", cascade = CascadeType.ALL, orphanRemoval = true)
     private Set<Category> categories = new HashSet<>();
+
+    @OneToMany(mappedBy = "user", cascade = CascadeType.ALL, orphanRemoval = true)
+    private Set<Transaction> transactions = new HashSet<>();
 
     public User() {}
 
@@ -59,5 +63,13 @@ public class User {
 
     public void setCategories(Set<Category> categories) {
         this.categories = categories;
+    }
+
+    public Set<Transaction> getTransactions() {
+        return transactions;
+    }
+
+    public void setTransactions(Set<Transaction> transactions) {
+        this.transactions = transactions;
     }
 }

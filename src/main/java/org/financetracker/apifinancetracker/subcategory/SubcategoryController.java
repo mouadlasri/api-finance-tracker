@@ -56,7 +56,7 @@ public class SubcategoryController {
     }
 
     @PutMapping("/{id}")
-    public ResponseEntity<SubcategoryResponse> update(@PathVariable Long id, @RequestBody CreateSubcategoryRequest request) {
+    public ResponseEntity<SubcategoryResponse> updateSubcategory(@PathVariable Long id, @RequestBody CreateSubcategoryRequest request) {
         Subcategory subcategoryToUpdate = subcategoryService.updateSubcategory(id, request);
 
         SubcategoryResponse response = new SubcategoryResponse(
