@@ -1,8 +1,10 @@
 package org.financetracker.apifinancetracker.transaction;
 
+import org.apache.coyote.Response;
 import org.financetracker.apifinancetracker.subcategory.SubcategoryService;
 import org.financetracker.apifinancetracker.transaction.dto.CreateTransactionRequest;
 import org.financetracker.apifinancetracker.transaction.dto.TransactionResponse;
+import org.financetracker.apifinancetracker.transaction.dto.TransactionSummaryResponse;
 import org.financetracker.apifinancetracker.user.UserService;
 import org.springframework.http.HttpStatus;
 import org.springframework.http.ResponseEntity;
@@ -49,7 +51,7 @@ public class TransactionController {
                         transaction.getDescription(),
                         transaction.getDate(),
                         transaction.getType(),
-                        null,
+                        transaction.getUser().getId(),
                         transaction.getSubcategory().getId()
                 )).collect(Collectors.toList());
 
@@ -71,6 +73,36 @@ public class TransactionController {
         );
 
         return new ResponseEntity<>(response, HttpStatus.CREATED);
+    }
+
+    @PutMapping("/{id}")
+    public ResponseEntity<TransactionResponse> updateTransaction(@PathVariable Long id, @RequestBody CreateTransactionRequest request) {
+        Transaction updatedTransaction = transactionService.updateTransaction(id, request);
+
+        TransactionResponse response = new TransactionResponse(
+                updatedTransaction.getId(),
+                updatedTransaction.getAmount(),
+                updatedTransaction.getDescription(),
+                updatedTransaction.getDate(),
+                updatedTransaction.getType(),
+                updatedTransaction.getUser().getId(),
+                updatedTransaction.getSubcategory().getId()
+        );
+
+        return ResponseEntity.ok(response);
+    }
+
+    @DeleteMapping("/{id}")
+    public ResponseEntity<Void> deleteTransaction(@PathVariable Long id) {
+        transactionService.deleteTransaction(id);
+        return ResponseEntity.noContent().build();
+    }
+
+    @GetMapping("/summary/user/{userId}")
+    public ResponseEntity<TransactionSummaryResponse> getSummaryByUserId(@PathVariable Long userId) {
+        TransactionSummaryResponse summary = transactionService.getSummaryByUserId(userId);
+
+        return ResponseEntity.ok(summary);
     }
 
 }
