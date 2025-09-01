@@ -1,12 +1,9 @@
 package org.financetracker.apifinancetracker.transaction;
 
-import org.apache.coyote.Response;
-import org.financetracker.apifinancetracker.subcategory.SubcategoryService;
 import org.financetracker.apifinancetracker.transaction.dto.CategoryTotalResponse;
 import org.financetracker.apifinancetracker.transaction.dto.CreateTransactionRequest;
 import org.financetracker.apifinancetracker.transaction.dto.TransactionResponse;
 import org.financetracker.apifinancetracker.transaction.dto.TransactionSummaryResponse;
-import org.financetracker.apifinancetracker.user.UserService;
 import org.springframework.http.HttpStatus;
 import org.springframework.http.ResponseEntity;
 import org.springframework.web.bind.annotation.*;
