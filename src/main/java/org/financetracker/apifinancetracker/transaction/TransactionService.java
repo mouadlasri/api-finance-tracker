@@ -1,9 +1,11 @@
 package org.financetracker.apifinancetracker.transaction;
 
+import org.financetracker.apifinancetracker.category.CategoryRepository;
 import org.financetracker.apifinancetracker.common.TransactionType;
 import org.financetracker.apifinancetracker.subcategory.Subcategory;
 import org.financetracker.apifinancetracker.subcategory.SubcategoryRepository;
 import org.financetracker.apifinancetracker.subcategory.SubcategoryService;
+import org.financetracker.apifinancetracker.transaction.dto.CategoryTotalResponse;
 import org.financetracker.apifinancetracker.transaction.dto.CreateTransactionRequest;
 import org.financetracker.apifinancetracker.transaction.dto.TransactionResponse;
 import org.financetracker.apifinancetracker.transaction.dto.TransactionSummaryResponse;
@@ -24,11 +26,13 @@ public class TransactionService {
     private TransactionRepository transactionRepository;
     private UserRepository userRepository;
     private SubcategoryRepository subcategoryRepository;
+    private CategoryRepository categoryRepository;
 
-    public TransactionService(TransactionRepository transactionRepository, UserRepository userRepository, SubcategoryRepository subcategoryRepository) {
+    public TransactionService(TransactionRepository transactionRepository, UserRepository userRepository, SubcategoryRepository subcategoryRepository, CategoryRepository categoryRepository) {
         this.transactionRepository = transactionRepository;
         this.userRepository = userRepository;
         this.subcategoryRepository = subcategoryRepository;
+        this.categoryRepository = categoryRepository;
     }
 
     public Transaction findTransactionById(Long id) {
@@ -115,5 +119,24 @@ public class TransactionService {
                 .reduce(BigDecimal.ZERO, BigDecimal::add);
 
         return new TransactionSummaryResponse(userId, totalIncome, totalExpenses);
+    }
+
+    public CategoryTotalResponse getCategoryTotalByUserId(Long userId, Long categoryId) {
+        if (!userRepository.existsById(userId)) {
+            throw new ResponseStatusException(HttpStatus.NOT_FOUND, "User not found with ID: " + userId);
+        }
+        // validate if category exists and belongs to the user
+        if (!categoryRepository.existsByIdAndUserId(categoryId, userId)) {
+            throw new ResponseStatusException(HttpStatus.NOT_FOUND, "Category not found with ID: " + categoryId + " for user: " + userId);
+        }
+
+        // get all transaction of user
+        List<Transaction> transactions = transactionRepository.findByUser_IdAndSubcategory_Category_Id(userId, categoryId);
+
+        BigDecimal total = transactions.stream()
+                .map(transaction -> transaction.getAmount())
+                .reduce(BigDecimal.ZERO, BigDecimal::add);
+
+        return new CategoryTotalResponse(userId, categoryId, total);
     }
 }

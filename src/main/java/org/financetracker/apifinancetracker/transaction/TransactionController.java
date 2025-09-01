@@ -2,6 +2,7 @@ package org.financetracker.apifinancetracker.transaction;
 
 import org.apache.coyote.Response;
 import org.financetracker.apifinancetracker.subcategory.SubcategoryService;
+import org.financetracker.apifinancetracker.transaction.dto.CategoryTotalResponse;
 import org.financetracker.apifinancetracker.transaction.dto.CreateTransactionRequest;
 import org.financetracker.apifinancetracker.transaction.dto.TransactionResponse;
 import org.financetracker.apifinancetracker.transaction.dto.TransactionSummaryResponse;
@@ -98,11 +99,18 @@ public class TransactionController {
         return ResponseEntity.noContent().build();
     }
 
-    @GetMapping("/summary/user/{userId}")
+    @GetMapping("/summary/users/{userId}")
     public ResponseEntity<TransactionSummaryResponse> getSummaryByUserId(@PathVariable Long userId) {
         TransactionSummaryResponse summary = transactionService.getSummaryByUserId(userId);
 
         return ResponseEntity.ok(summary);
+    }
+
+    @GetMapping("/summary/users/{userId}/categories/{categoryId}")
+    public ResponseEntity<CategoryTotalResponse> getCategoryTotalByUserId(@PathVariable Long userId, @PathVariable long categoryId) {
+        CategoryTotalResponse total = transactionService.getCategoryTotalByUserId(userId, categoryId);
+
+        return ResponseEntity.ok(total);
     }
 
 }
